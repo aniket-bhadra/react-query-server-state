@@ -1,10 +1,13 @@
-import { useQuery } from "react-query";
+import PostList from "./components/PostList";
+import "./App.css";
 
 function App() {
-  useQuery({
-    queryKey: ["posts"],
-  });
-  return <div>hello world</div>;
+  return (
+    <div>
+      <h2 className="title">My Posts</h2>
+      <PostList />
+    </div>
+  );
 }
 
 export default App;

@@ -46,3 +46,15 @@ When using **React Query** for data fetching:
 
 ---
 
+```javascript
+useQuery({
+  queryKey: ["posts"],
+  queryFn: fetchPosts,
+});
+```
+### Q: Why is `queryKey` an array?
+
+**A:** The `queryKey` is an array to uniquely identify and cache queries effectively.
+
+- It allows additional context (e.g., **page number**) to be injected.
+- This is particularly useful for scenarios like **pagination** and **filters**.
