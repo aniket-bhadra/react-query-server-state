@@ -20,8 +20,15 @@ const PostList = () => {
 
   const { mutate } = useMutation({
     mutationFn: addPost,
-    onSuccess: (data, variables) => {
-      console.log(data, variables);
+    //runs before actual mutation
+    onMutate: () => {
+      return {
+        title: true, //this becomes the context parameter of onSuccess method
+      };
+    },
+    //runs after successful mutation
+    onSuccess: (data, variables, context) => {
+      console.log(context);
     },
   });
 
