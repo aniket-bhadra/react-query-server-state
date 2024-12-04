@@ -59,3 +59,7 @@ body {
   display: flex;
   justify-content: space-around;
 }
+
+.error-text {
+  cursor: pointer;
+}

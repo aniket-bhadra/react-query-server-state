@@ -19,7 +19,14 @@ const PostList = () => {
     queryFn: fetchTags,
   });
 
-  const { mutate } = useMutation({
+  const {
+    mutate,
+    isError: isMutationError,
+    isLoading: mutationLoading,
+    error: mutationError,
+    //reset the state
+    reset,
+  } = useMutation({
     mutationFn: addPost,
     //runs before actual mutation
     onMutate: () => {
@@ -37,6 +44,10 @@ const PostList = () => {
         //predicate: (query) => query.queryKey[0] === "posts",
       });
     },
+    //runs if error occurs
+    // onError: (error, variables, context) => {},
+    //no matters,mutation succeed or failed, runs every time
+    // onSettled: (data, error, variables, context) => {},
   });
 
   const handleSubmit = (e) => {
@@ -75,8 +86,13 @@ const PostList = () => {
         </div>
         <button type="submit">Post</button>
       </form>
-      {isLoading && <p>Loading.....</p>}
+      {isLoading && mutationLoading && <p>Loading.....</p>}
       {isError && <p>{error?.message}</p>}
+      {mutationError && (
+        <p onClick={() => reset()} className="error-text">
+          Unable To Post
+        </p>
+      )}
       {postsData?.map((post) => (
         <div key={post.id} className="post">
           <div>{post.title}</div>
