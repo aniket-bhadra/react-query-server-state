@@ -5,13 +5,13 @@ const fetchPosts = async () => {
 };
 
 const fetchTags = async () => {
-  const response = await fetch("http:localhost:5000/tags");
+  const response = await fetch("http://localhost:5000/tags");
   const tagsData = response.json();
   return tagsData;
 };
 
 const addPost = async (post) => {
-  const response = fetch("http://localhost:5000/posts", {
+  const response = await fetch("http://localhost:5000/posts", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

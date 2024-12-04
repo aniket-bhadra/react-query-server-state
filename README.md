@@ -13,8 +13,9 @@ When using **React Query** for data fetching:
   - `refetchInterval`
   - `retry`
   - `retryDelay`
+  - `staleTime`
 - Automatically retries on errors with customizable options (`retry` and `retryDelay`).
-- Offers an optimized data fetching solution with many prebuilt options to handle different scenarios.
+- Offers an optimized data fetching solution with many prebuilt options to handle different scenarios.(onMutate, onError, onSettled)
 
 > **Key Benefit:** React Query gives powerful tools for efficient data fetching, data manipulation on the server, and seamless updates on the client.
 
