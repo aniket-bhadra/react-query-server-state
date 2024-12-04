@@ -12,6 +12,7 @@ const PostList = () => {
     queryKey: ["posts"],
     queryFn: fetchPosts,
   });
+  const queryClient = useQueryClient();
 
   const { data: tagsData } = useQuery({
     queryKey: ["tags"],
@@ -28,7 +29,13 @@ const PostList = () => {
     },
     //runs after successful mutation
     onSuccess: (data, variables, context) => {
-      console.log(context);
+      queryClient.invalidateQueries({
+        queryKey: ["posts"],
+        //The `exact: true` ensures that only the query with the exact key `["posts"]` is invalidated, not other queries with keys starting with `["posts"]`, like `["posts", "1"]`.
+        exact: true,
+        //This invalidates all queries where the first key is "posts". Use it for complex cases instead of exact.only one is used at a time.The predicate function runs for every query in the cache when invalidateQueries is called (e.g., after a mutation's success). It checks each query key and invalidates those that satisfy the condition.
+        //predicate: (query) => query.queryKey[0] === "posts",
+      });
     },
   });
 

@@ -59,3 +59,9 @@ useQuery({
 
 - It allows additional context (e.g., **page number**) to be injected.
 - This is particularly useful for scenarios like **pagination** and **filters**.
+
+### useQueryClient
+
+- The `useQueryClient` hook gives access to the **QueryClient instance** that was set up when configuring React Query. 
+- Through this instance, you can interact with React Query's internal API to control and manage operations like queries, mutations, and caching. 
+- It’s fair to call it an API, as it provides methods to manage React Query's functionality programmatically.
