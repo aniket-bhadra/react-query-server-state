@@ -17,6 +17,7 @@ const PostList = () => {
   const { data: tagsData } = useQuery({
     queryKey: ["tags"],
     queryFn: fetchTags,
+    staleTime: Infinity,
   });
 
   const {
@@ -88,7 +89,7 @@ const PostList = () => {
       </form>
       {isLoading && mutationLoading && <p>Loading.....</p>}
       {isError && <p>{error?.message}</p>}
-      {mutationError && (
+      {isMutationError && (
         <p onClick={() => reset()} className="error-text">
           Unable To Post
         </p>

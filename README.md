@@ -32,6 +32,7 @@ When using **React Query** for data fetching:
   Example: Adding a product to a cart.
   - Client state involves managing interactions with cart.
 
+- **React Query is used to store only this server state not client state**
 ---
 
 ## Using Redux and React Query
