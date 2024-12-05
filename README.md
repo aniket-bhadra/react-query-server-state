@@ -66,3 +66,19 @@ useQuery({
 - The `useQueryClient` hook gives access to the **QueryClient instance** that was set up when configuring React Query. 
 - Through this instance, you can interact with React Query's internal API to control and manage operations like queries, mutations, and caching. 
 - It’s fair to call it an API, as it provides methods to manage React Query's functionality programmatically.
+
+
+### Stale time vs Cache time
+
+- **StaleTime (1 minute)**: Data is **fresh** for 1 minute; no refetch happens during this time.
+- **After StaleTime**: Data becomes **stale**, but it stays in the cache.
+- **CacheTime**: If no components use the query for the specified `cacheTime` (e.g., 5 minutes), the stale data is removed from memory. 
+
+In short: **StaleTime** controls freshness; **CacheTime** controls how long unused data stays in memory.
+
+### Stale data use cases
+Stale data is used when a refetch isn’t possible due to network issues.Stale data can also be shown instantly while a background refetch updates it, avoiding blank states.
+
+#### cacheTime:0
+- As long as the component using the query is mounted, the data stays in memory.
+- cacheTime: 0 only removes the data immediately after the component unmounts or stops observing the query.

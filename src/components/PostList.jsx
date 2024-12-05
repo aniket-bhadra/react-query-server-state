@@ -11,6 +11,7 @@ const PostList = () => {
   } = useQuery({
     queryKey: ["posts"],
     queryFn: fetchPosts,
+    cacheTime: 0,
   });
   const queryClient = useQueryClient();
 
