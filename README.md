@@ -86,3 +86,7 @@ Stale data is used when a refetch isn’t possible due to network issues.Stale d
 ### staleTime vs keepPreviousData
 - staleTime: Controls how long the data is considered fresh and prevents unnecessary refetching.
 - placeholderData with keepPreviousData: Doesn't affect data freshness; it just provides previous stale data as a placeholder.
+
+### query refetches only when a variable inside the queryKey changes
+- The query refetches only when a variable inside the queryKey (like Toggle) changes.
+- Any other variable changes (even important ones) won't trigger a refetch unless explicitly included in the queryKey.

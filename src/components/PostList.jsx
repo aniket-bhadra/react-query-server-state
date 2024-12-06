@@ -6,6 +6,7 @@ import { keepPreviousData } from "@tanstack/react-query";
 
 const PostList = () => {
   const [page, setPage] = useState(1);
+  const [testToggle, setTestToggle] = useState(true);
   const {
     data: postsData,
     isLoading,
@@ -17,14 +18,19 @@ const PostList = () => {
     // cacheTime: 0
     // refetchInterval: 3 * 1000,
     // staleTime: 1000 * 60 * 5
-    placeholderData: keepPreviousData,
+    // placeholderData: keepPreviousData,
   });
   const queryClient = useQueryClient();
 
   const { data: tagsData } = useQuery({
-    queryKey: ["tags"],
+    queryKey: [
+      "tags",
+      {
+        testToggle,
+      },
+    ],
     queryFn: fetchTags,
-    staleTime: Infinity,
+    // staleTime: Infinity,
   });
 
   const {
@@ -74,6 +80,8 @@ const PostList = () => {
     e.target.reset();
   };
 
+  console.log("test toggle is running!!");
+
   return (
     <div className="container">
       <form onSubmit={handleSubmit}>
@@ -122,6 +130,9 @@ const PostList = () => {
           disabled={!postsData?.next}
         >
           Next Page
+        </button>
+        <button onClick={() => setTestToggle((prevState) => !prevState)}>
+          Test Toggle
         </button>
       </div>
       {postsData?.data?.map((post) => (
