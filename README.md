@@ -82,3 +82,7 @@ Stale data is used when a refetch isn’t possible due to network issues.Stale d
 #### cacheTime:0
 - As long as the component using the query is mounted, the data stays in memory.
 - cacheTime: 0 only removes the data immediately after the component unmounts or stops observing the query.
+
+### staleTime vs keepPreviousData
+- staleTime: Controls how long the data is considered fresh and prevents unnecessary refetching.
+- placeholderData with keepPreviousData: Doesn't affect data freshness; it just provides previous stale data as a placeholder.

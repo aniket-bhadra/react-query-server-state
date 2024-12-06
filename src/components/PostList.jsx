@@ -1,17 +1,23 @@
-import React from "react";
+//reset the state
+import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { addPost, fetchPosts, fetchTags } from "../api/api";
+import { keepPreviousData } from "@tanstack/react-query";
 
 const PostList = () => {
+  const [page, setPage] = useState(1);
   const {
     data: postsData,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["posts"],
-    queryFn: fetchPosts,
-    cacheTime: 0,
+    queryKey: ["posts", { page }],
+    queryFn: () => fetchPosts(page),
+    // cacheTime: 0
+    // refetchInterval: 3 * 1000,
+    // staleTime: 1000 * 60 * 5
+    placeholderData: keepPreviousData,
   });
   const queryClient = useQueryClient();
 
@@ -26,7 +32,6 @@ const PostList = () => {
     isError: isMutationError,
     isLoading: mutationLoading,
     error: mutationError,
-    //reset the state
     reset,
   } = useMutation({
     mutationFn: addPost,
@@ -61,7 +66,7 @@ const PostList = () => {
     if (!title || !tags.length) return;
 
     mutate({
-      id: postsData.length + 1,
+      id: postsData?.data?.length + 1,
       title,
       tags,
     });
@@ -95,7 +100,31 @@ const PostList = () => {
           Unable To Post
         </p>
       )}
-      {postsData?.map((post) => (
+
+      <div className="pages">
+        <button
+          onClick={() =>
+            setPage((prevPage) => {
+              return Math.max(prevPage - 1, 0);
+            })
+          }
+          disabled={!postsData?.prev}
+        >
+          Previous Page
+        </button>
+        <span>{page}</span>
+        <button
+          onClick={() =>
+            setPage((oldPage) => {
+              return oldPage + 1;
+            })
+          }
+          disabled={!postsData?.next}
+        >
+          Next Page
+        </button>
+      </div>
+      {postsData?.data?.map((post) => (
         <div key={post.id} className="post">
           <div>{post.title}</div>
           {post.tags.map((tag) => (
