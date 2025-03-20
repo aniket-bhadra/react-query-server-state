@@ -27,3 +27,29 @@ const addPost = async (post) => {
 };
 
 export { fetchPosts, fetchTags, addPost };
+// create function to fetch data from the API
+
+//find prime number checking
+function isPrime(num) {
+  if (num < 2) return false;
+  for (let k = 2; k < num; k++) {
+    if (num % k === 0) return false;
+  }
+  return true;
+}
+//find fibonacci series
+function fibonacci(n) {
+  let arr = [0, 1];
+  for (let i = 2; i < n; i++) {
+    arr.push(arr[i - 1] + arr[i - 2]);
+  }
+  return arr;
+}
+
+//find factorial of a number
+function factorial(n) {
+  if (n === 0) return 1;
+  return n * factorial(n - 1);
+}
+
+

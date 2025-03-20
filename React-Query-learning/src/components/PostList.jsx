@@ -18,19 +18,14 @@ const PostList = () => {
     // cacheTime: 0
     // refetchInterval: 3 * 1000,
     // staleTime: 1000 * 60 * 5
-    // placeholderData: keepPreviousData,
+    // placeholderData: keepPreviousData,,
   });
   const queryClient = useQueryClient();
 
   const { data: tagsData } = useQuery({
-    queryKey: [
-      "tags",
-      {
-        testToggle,
-      },
-    ],
+    queryKey: ["tags"],
     queryFn: fetchTags,
-    // staleTime: Infinity,
+    staleTime: Infinity,
   });
 
   const {
@@ -146,5 +141,6 @@ const PostList = () => {
     </div>
   );
 };
+
 
 export default PostList;
