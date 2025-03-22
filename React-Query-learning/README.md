@@ -671,3 +671,34 @@ const { data: orders } = useQuery({
 ✅ `enabled: !!user?.id` ensures the second query **waits** for `user.id`.  
 ✅ Prevents unnecessary API calls when dependency is **not available**.  
 ✅ Keeps UI efficient by avoiding errors from missing data.
+
+
+### update the UI
+
+In **React Query**, whenever new data comes from the server (whether it's an update to existing data or completely new data), **React Query does not automatically update the UI**. We must manually handle the update.  
+
+There are **five ways** to update the UI when new data arrives:
+
+1. **Extract data from `useMutation` and display based on `isSuccess`**  
+   - Not recommended because this data is **not reactive**, leading to errors.  
+
+2. **Refetch data using `invalidateQueries` in `onSuccess` of the mutation**  
+   - Works but **not the most efficient** approach.  
+
+3. **Store query data in a global state and update it manually in `onSuccess`**  
+   - **Good approach**, as UI updates immediately after a successful mutation.  
+
+4. **Update the cache using `setQueryData` in `onSuccess`**  
+   - **Better approach** since the cache updates instantly without refetching.  
+
+5. **Use Optimistic Updates** (Two methods):  
+   - **Through variables**:  
+     - Use `isPending` to show temporary UI updates.  
+     - If successful, call `refetch()`, removing temporary data.  
+     - If an error occurs, display an error message instead.  
+   - **Through cache**:  
+     - Use `onMutate` to **optimistically update the UI**, assuming the request succeeds.  
+     - Store the previous state and revert if the mutation fails.  
+     - In `onSettle`, refetch the query to sync with the server.  
+
+---
