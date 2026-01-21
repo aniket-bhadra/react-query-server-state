@@ -1,5 +1,23 @@
 # React Query and State Management Guide
 
+## Table of Contents
+
+1. [Introduction to React Query](#1-introduction-to-react-query)
+2. [Understanding Server State vs Client State](#2-understanding-server-state-vs-client-state)
+3. [When to Use React Query vs Redux](#3-when-to-use-react-query-vs-redux)
+4. [Core Functionality: useQuery](#4-core-functionality-usequery)
+5. [Stale Time vs Cache Time](#5-stale-time-vs-cache-time)
+6. [Query Key Importance](#6-query-key-importance)
+7. [Mutations with useMutation](#7-mutations-with-usemutation)
+8. [Updating UI After Mutations](#8-updating-ui-after-mutations)
+9. [React Query vs Apollo Client Caching](#9-react-query-vs-apollo-client-caching)
+10. [Optimistic Updates](#10-optimistic-updates)
+11. [Advanced Mutation Topics](#11-advanced-mutation-topics)
+12. [Dependent Queries](#12-dependent-queries)
+13. [React Query vs Apollo Client vs React Query + GraphQL](#react-query-vs-apollo-client-vs-react-query--graphql)
+
+---
+
 ## 1. Introduction to React Query
 
 ### Why Use React Query for Data Fetching?
