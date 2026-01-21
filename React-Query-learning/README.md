@@ -27,12 +27,10 @@ When using **React Query** for data fetching:
 
 - **Server State:**  
   Example: Fetched product details from the server.
-
   - Server data is asynchronous because it involves fetching data from a remote server. This is why it's called asynchronous server state.
 
 - **Client State:**  
   Example: Adding a product to a cart.
-
   - Client state involves managing interactions with cart.
 
 - **React Query is used to store only this server state not client state**
@@ -42,7 +40,6 @@ When using **React Query** for data fetching:
 ## 3. When to Use React Query vs Redux
 
 1. **When to Use React Query:**
-
    - Ideal for managing **server state** in projects where Redux is not being heavily used.
    - Hassle-free setup: No additional packages or complex configurations are required.
 
@@ -599,7 +596,7 @@ mutation.mutate(todo, {
 ```tsx
 const fetchPosts = async (page) => {
   const response = await fetch(
-    `http://localhost:5000/posts?_page=${page}&_per_page=5`
+    `http://localhost:5000/posts?_page=${page}&_per_page=5`,
   );
   if (!response.ok) {
     throw new Error("Failed to fetch posts");
@@ -624,7 +621,6 @@ Calling reset() on the click of an error message clears the error state (isError
 ### Ensuring the app continues running smoothly even if errors occur
 
 1. **Using `onMutate` and `onError` for rollback:**
-
    - In `onMutate`, return the previous state before the mutation.
    - If an error occurs in `onError`, restore the cache to the previous state using `queryClient.setQueryData()`.
 
@@ -672,33 +668,161 @@ const { data: orders } = useQuery({
 ✅ Prevents unnecessary API calls when dependency is **not available**.  
 ✅ Keeps UI efficient by avoiding errors from missing data.
 
-
 ### update the UI
 
-In **React Query**, whenever new data comes from the server (whether it's an update to existing data or completely new data), **React Query does not automatically update the UI**. We must manually handle the update.  
+In **React Query**, whenever new data comes from the server (whether it's an update to existing data or completely new data), **React Query does not automatically update the UI**. We must manually handle the update.
 
 There are **five ways** to update the UI when new data arrives:
 
-1. **Extract data from `useMutation` and display based on `isSuccess`**  
-   - Not recommended because this data is **not reactive**, leading to errors.  
+1. **Extract data from `useMutation` and display based on `isSuccess`**
+   - Not recommended because this data is **not reactive**, leading to errors.
 
-2. **Refetch data using `invalidateQueries` in `onSuccess` of the mutation**  
-   - Works but **not the most efficient** approach.  
+2. **Refetch data using `invalidateQueries` in `onSuccess` of the mutation**
+   - Works but **not the most efficient** approach.
 
-3. **Store query data in a global state and update it manually in `onSuccess`**  
-   - **Good approach**, as UI updates immediately after a successful mutation.  
+3. **Store query data in a global state and update it manually in `onSuccess`**
+   - **Good approach**, as UI updates immediately after a successful mutation.
 
-4. **Update the cache using `setQueryData` in `onSuccess`**  
-   - **Better approach** since the cache updates instantly without refetching.  
+4. **Update the cache using `setQueryData` in `onSuccess`**
+   - **Better approach** since the cache updates instantly without refetching.
 
-5. **Use Optimistic Updates** (Two methods):  
-   - **Through variables**:  
-     - Use `isPending` to show temporary UI updates.  
-     - If successful, call `refetch()`, removing temporary data.  
-     - If an error occurs, display an error message instead.  
-   - **Through cache**:  
-     - Use `onMutate` to **optimistically update the UI**, assuming the request succeeds.  
-     - Store the previous state and revert if the mutation fails.  
-     - In `onSettle`, refetch the query to sync with the server.  
+5. **Use Optimistic Updates** (Two methods):
+   - **Through variables**:
+     - Use `isPending` to show temporary UI updates.
+     - If successful, call `refetch()`, removing temporary data.
+     - If an error occurs, display an error message instead.
+   - **Through cache**:
+     - Use `onMutate` to **optimistically update the UI**, assuming the request succeeds.
+     - Store the previous state and revert if the mutation fails.
+     - In `onSettle`, refetch the query to sync with the server.
 
 ---
+
+# React Query vs Apollo Client vs React Query + GraphQL
+
+## Data Fetching with `useQuery`
+
+### React Query
+
+```tsx
+const { data, error, isLoading, isFetching, refetch } = useQuery({
+  queryKey: ["posts"],
+  queryFn: async () => fetch("/api/posts").then((res) => res.json()),
+});
+```
+
+### Apollo Client
+
+```tsx
+const { data, error, loading, refetch, networkStatus } = useQuery(GET_POSTS, {
+  notifyOnNetworkStatusChange: true, // Enables networkStatus updates
+});
+
+// True only when refetching
+const isFetching = networkStatus === 4;
+```
+
+> **Note:** `networkStatus === 4` indicates that Apollo Client is refetching, similar to `isFetching` in React Query.
+
+### React Query + GraphQL
+
+```tsx
+const { data, error, isLoading, isFetching, refetch } = useQuery({
+  queryKey: ["posts"],
+  queryFn: async () => request("/graphql", gqlQuery),
+});
+```
+
+## Data Modification with `useMutation`
+
+### React Query
+
+```tsx
+const mutation = useMutation({
+  mutationFn: async (newPost) => {
+    return fetch("/api/posts", {
+      method: "POST",
+      body: JSON.stringify(newPost),
+    });
+  },
+
+  onMutate: async (newPost) => {
+    console.log("Mutation started with", newPost);
+    return { tempId: Date.now() }; // Context for error rollback
+  },
+
+  onError: (err, variables, context) => {
+    console.log("Error:", err, "Temp ID:", context.tempId);
+  },
+
+  onSuccess: (data) => {
+    console.log("Mutation success:", data);
+  },
+
+  onSettled: () => {
+    console.log("Mutation done");
+  },
+});
+```
+
+### Apollo Client
+
+```tsx
+const [mutate, { loading, error }] = useMutation(CREATE_POST, {
+  onError: (err) => console.log("Error:", err),
+  onCompleted: (data) => console.log("Mutation success:", data),
+  update: (cache, { data }) => {
+    cache.modify({
+      fields: {
+        posts(existingPosts = []) {
+          return [...existingPosts, data.createPost];
+        },
+      },
+    });
+  },
+});
+```
+
+### React Query + GraphQL
+
+```tsx
+const mutation = useMutation({
+  mutationFn: async (newPost) => {
+    return request("/graphql", gqlMutation, { input: newPost });
+  },
+
+  onMutate: async (newPost) => {
+    console.log("Mutation started with", newPost);
+    return { tempId: Date.now() };
+  },
+
+  onError: (err, variables, context) => {
+    console.log("Error:", err, "Temp ID:", context.tempId);
+  },
+
+  onSuccess: (data) => {
+    console.log("Mutation success:", data);
+  },
+
+  onSettled: () => {
+    console.log("Mutation done");
+  },
+});
+```
+
+## Key Differences
+
+| Feature                | React Query                          | Apollo Client                            |
+| ---------------------- | ------------------------------------ | ---------------------------------------- |
+| **Optimistic Updates** | Uses `onMutate`                      | Uses `update` callback                   |
+| **Cache Management**   | Manual with `invalidateQueries()`    | Automatic with normalized cache          |
+| **Success Handling**   | Separate `onSuccess` and `onSettled` | Combined in `onCompleted`                |
+| **Refetch Indicator**  | Built-in `isFetching`                | `networkStatus === 4`                    |
+| **Primary Use Case**   | REST/GraphQL agnostic                | GraphQL-focused                          |
+| **Bundle Size**        | Lighter                              | Heavier with full GraphQL implementation |
+
+## When to Choose Which?
+
+- **React Query**: When working with REST APIs or when you need a lightweight solution.
+- **Apollo Client**: When fully committed to GraphQL and need robust cache normalization.
+- **React Query + GraphQL**: When you want GraphQL benefits with React Query's simpler API.
